@@ -48,8 +48,8 @@ async def assign_role_to_user(server:discord.Guild, user_id:int, role:discord.gu
       server.get_member(user_id).roles
       #print("GOT HERE?")
       return 1
-    except:
-      print("Exception in wf.assign_role_to_user")
+    except Exception as e:
+      print("Exception in wf.assign_role_to_user:" + e)
   else:
     print("Failed wf.assign_role_to_user")
 
