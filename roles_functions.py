@@ -45,7 +45,7 @@ async def assign_role_to_user(server:discord.Guild, user_id:int, role:discord.gu
       #print (member)
       await member.add_roles(role)
       #print("New Roles:")
-      server.get_member(user_id).roles)
+      server.get_member(user_id).roles
       #print("GOT HERE?")
       return 1
     except:
