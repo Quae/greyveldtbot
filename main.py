@@ -103,8 +103,7 @@ async def agree(ctx): #tx.message.guild, ctx.message.channel, ctx.message.author
   server = get_server_obj()
   user_roles = rf.get_all_roles_of_user(server, member_id)
   
-  # fresh_meat_role = rf.get_specific_role_by_id(server, rf.fresh_meat_id)
-  fresh_meat_role = rf.get_specific_role_by_id(server, rf.testRole_id)
+  fresh_meat_role = rf.get_specific_role_by_id(server, rf.fresh_meat_id)
   everyone_id = rf.everyone_id
  
   if (fresh_meat_role is None):
