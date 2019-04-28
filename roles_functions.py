@@ -39,14 +39,14 @@ def get_all_server_roles(server: discord.Guild):
 async def assign_role_to_user(server:discord.Guild, user_id:int, role:discord.guild.Role):
   if (role is not None):
     try:
-      print("Role in rf assign_role_to_user:")
-      print(role)
+      #print("Role in rf assign_role_to_user:")
+      #print(role)
       member = server.get_member(user_id)
-      print (member)
-      print(member.add_roles(role))
-      print("New Roles:")
-      print(server.get_member(user_id).roles)
-      print("GOT HERE?")
+      #print (member)
+      await member.add_roles(role)
+      #print("New Roles:")
+      server.get_member(user_id).roles)
+      #print("GOT HERE?")
       return 1
     except:
       print("Exception in wf.assign_role_to_user")
