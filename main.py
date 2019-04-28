@@ -43,7 +43,7 @@ async def on_ready(pass_context=True):
 
   set_server_obj(bot.guilds[0])
   server = get_server_obj()
-  print(server.roles) #roles
+  #print(server.roles) #roles
   print("Logged in as " + bot.user.name + " on " + server.name + ", id: " + str(server.id))
 
 
