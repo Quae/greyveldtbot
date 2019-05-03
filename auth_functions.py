@@ -1,11 +1,28 @@
 import os
 import discord
+from airtable import Airtable
 
 def get_discord_token():
   return os.getenv("DSB_TOKEN")
 
 def get_discord_server_id():
   return os.getenv("DISCORD_SERVER_ID")
+
+def get_airtable_table(table_name):
+  air_table_connection = None
+  base_key = os.getenv("AIRTABLE_BASE_NAME")
+
+  #os.getenv("AIRTABLE_USER_TABLE_NAME")
+  try:
+    air_table_connection = Airtable(base_key, str(table_name))
+  except Exception as e:
+    print("Exception in getting user airtable: " + str(e))
+
+  if air_table_connection is None:
+    print("Airtable not found.")
+
+  return air_table_connection
+
 
 def is_not_from_self(message, bot):
   if message.author != bot.user:

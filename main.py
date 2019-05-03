@@ -11,10 +11,12 @@ from discord.ext import commands
 import auth_functions
 import roles_functions
 import welcoming_functions
+import kudos_functions
 
 rf = roles_functions
 af = auth_functions
 wf = welcoming_functions
+kf = kudos_functions
 
 
 bot = commands.Bot(command_prefix="!")
@@ -94,6 +96,26 @@ async def rules(ctx): #tx.message.guild, ctx.message.channel, ctx.message.author
     Read our terms of service.
     '''
     await ctx.send(embed=wf.get_rules_embed())
+
+@bot.command()
+async def wtf(ctx): #tx.message.guild, ctx.message.channel, ctx.message.author
+    print("WTF")
+    await ctx.send("WTF")
+
+
+@bot.command()
+async def kr(ctx): #tx.message.guild, ctx.message.channel, ctx.message.author
+    '''
+    Get a readout of your kudos stats!
+    '''
+    member_info = ctx.message.author
+    embedInfo = kf.kudos_report(member_info)
+    try:
+      print(embedInfo)
+    except Exception as e:
+      print("Unable to print embedInfo: " + e)
+    #server = get_server_obj()
+    await ctx.send(embed=embedInfo)
 
 
 @bot.command()
