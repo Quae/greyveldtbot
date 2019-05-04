@@ -16,17 +16,30 @@ def kudos_report(member_info):
 
   try:
     datapoints = dbf.get_kudos_db_data(member_info)
-    #print(user_kudos_info)
-    
-    # for record in records:
-    #      print(record)
-      #   for field in record['fields']:
-      #     print(field)
-    embed.add_field(name="Lifetime Kudos Accrual:", value=datapoints['lifetime_accrual'])
-    #embed.add_field(name="Spendable Kudos:", value=datapoints['spendable_kudos'])
-    embed.add_field(name="Giftable Kudos:", value=datapoints['giftable_kudos_available'])
-    embed.add_field(name="Unique Kudosees:", value=datapoints['unique_kudosees'])
+    print (datapoints)
+
+    #ono = bot.get_emoji(521148278079881219)
+    #await ctx.send(f"{ono} You said {text}")
+    embed.add_field(name=":clap: Lifetime Kudos Accrual:", value=datapoints['lifetime_accrual'])
+    embed.add_field(name=" :money_with_wings: Spendable Kudos:", value=datapoints['spendable_kudos'])
+    embed.add_field(name=":gift_heart: Giftable Kudos:", value=datapoints['giftable_kudos_available'])
+    embed.add_field(name=":handshake: Unique Kudosees:", value=datapoints['unique_kudosees'])
   except Exception as e:
       print ("Error in kudos_report: " + e)
 
   return embed
+
+
+def build_blank_kudos_db_entry(member_info):
+  datapoints = {}
+  datapoints['discord_user_id'] = str(member_info.id)
+  datapoints['lifetime_accrual'] = 0
+  datapoints['spendable_kudos'] = 0
+  datapoints['giftable_kudos_available'] = 0
+  datapoints['unique_kudosees'] = 0
+  return datapoints
+
+def add_kudos(discord_user_id, amount_to_kudos):
+  entry = {}
+  entry['discord_user_id'] = discord_user_id
+  entry['lifetime_accrual'] = amount_to_kudos

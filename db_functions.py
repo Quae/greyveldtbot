@@ -5,8 +5,10 @@ import airtable
 import pprint
 import utils
 import json
+import kudos_functions
 
 af = auth_functions
+kf = kudos_functions
 
 def get_kudos_airtable():
     kudos_table = af.get_airtable_table(os.getenv("AIRTABLE_KUDOS_TABLE_NAME"))
@@ -68,12 +70,18 @@ def create_user_stat_entry(member_info):
 def create_kudos_table_entry(member_info):
   try:
     member_id = str(member_info.id)
+    print("Member ID:")
+    print(member_id)
     kudos_airtable = get_kudos_airtable()
     print(kudos_airtable)
     records = kudos_airtable.search('discord_user_id', member_id)
 
+    print(records)
+
     if not records:
-      newEntry = {'discord_user_id': str(member_info.id)}
+      print(82)
+      #newEntry = {'discord_user_id': str(member_info.id)}
+      newEntry = kf.build_blank_kudos_db_entry(member_info)
       print("New Entry:")
       print(newEntry)
       

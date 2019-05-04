@@ -14,6 +14,7 @@ import welcoming_functions
 import kudos_functions
 import db_functions
 import utils
+from discord import Embed, Emoji
 
 rf = roles_functions
 af = auth_functions
@@ -50,7 +51,6 @@ async def on_ready(pass_context=True):
   server = get_server_obj()
   #print(server.roles) #roles
   print("Logged in as " + bot.user.name + " on " + server.name + ", id: " + str(server.id))
-
 
 @bot.event
 async def on_member_join(member):
@@ -123,6 +123,9 @@ async def kr(ctx): #tx.message.guild, ctx.message.channel, ctx.message.author
     #server = get_server_obj()
     await ctx.send(embed=embedInfo)
 
+# @bot.command() 
+# async def getemoji(emoji: discord.Emoji): 
+#   print(emoji.id)
 
 @bot.command()
 async def agree(ctx, *args): #tx.message.guild, ctx.message.channel, ctx.message.author
