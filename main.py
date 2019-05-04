@@ -12,11 +12,14 @@ import auth_functions
 import roles_functions
 import welcoming_functions
 import kudos_functions
+import db_functions
+import utils
 
 rf = roles_functions
 af = auth_functions
 wf = welcoming_functions
 kf = kudos_functions
+dbf = db_functions
 
 
 bot = commands.Bot(command_prefix="!")
@@ -99,8 +102,11 @@ async def rules(ctx): #tx.message.guild, ctx.message.channel, ctx.message.author
 
 @bot.command()
 async def wtf(ctx): #tx.message.guild, ctx.message.channel, ctx.message.author
-    print("WTF")
-    await ctx.send("WTF")
+    
+    member_info = ctx.message.author 
+    member_info.id = "888889" #fake member info, 
+    dbf.create_kudos_table_entry(member_info)
+    await ctx.send("WTF executred")
 
 
 @bot.command()
@@ -119,11 +125,20 @@ async def kr(ctx): #tx.message.guild, ctx.message.channel, ctx.message.author
 
 
 @bot.command()
-async def agree(ctx): #tx.message.guild, ctx.message.channel, ctx.message.author
+async def agree(ctx, *args): #tx.message.guild, ctx.message.channel, ctx.message.author
 #do more
+  member = ctx.message.author
   member_id = ctx.message.author.id
   server = get_server_obj()
   user_roles = rf.get_all_roles_of_user(server, member_id)
+
+  debug = False
+
+  if (args):
+    if (args[0] == "debug"):
+      print("Debugging is ON!")
+      user_roles = [rf.get_specific_role_by_id(server, rf.everyone_id)]
+      debug = True
   
   fresh_meat_role = rf.get_specific_role_by_id(server, rf.fresh_meat_id)
   everyone_id = rf.everyone_id
@@ -132,11 +147,33 @@ async def agree(ctx): #tx.message.guild, ctx.message.channel, ctx.message.author
     print("Fresh_meat not valid")
     return 0
 
-  if (wf.brand_new_user(everyone_id, user_roles) == 1):
+  if (wf.brand_new_user(everyone_id, user_roles, debug) is True):
+    try:
+      print("Waiting assign")
       await rf.assign_role_to_user(server, member_id, fresh_meat_role)
+      #print(member_id)
+      print ("Awaiting DB entry, member.id:")
+      print(member.id)
+      statResults = dbf.create_user_stat_entry(member)
+      if (debug):
+        print("Stats creation:")
+        print(statResults)
+
+      kudosResults = dbf.create_kudos_table_entry(member)
+      if (debug):
+        print("Kudos creation:")
+        print(kudosResults)
+
+    except Exception as e:
+      print("Error in !agree:")
+      print(e)
+      return False
 
   else:
     print("Member already has other roles.")
+    return
+    
+  
 
   await ctx.send(embed=wf.tos_agreed_response())
     

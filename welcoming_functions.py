@@ -18,13 +18,18 @@ def tos_agreed_response():
   embed.add_field(name="You are now '@Fresh Meat!'", value="You now have access to additional channels. If not, reach out to #ooc_help!")
   return embed
 
-def brand_new_user(everyone_id:int, user_roles:list):
-  if (len(user_roles) == 2): #change to 1
-    #print("Only 1 role:")
-    #print(str(user_roles[0].id))
+def brand_new_user(everyone_id, user_roles:list, debug):
+  print (user_roles)
+  print(len(user_roles))
+  
+  if (debug):
+    print ("Using fake roles!")
+  
+  if ((len(user_roles) == 1) and (str(user_roles[0].id)) == str(everyone_id)):
+    print("Only 1 role:")
+    print(str(user_roles[0].id))
+    print ("EVERYNE role found")
     #print(str(everyone_id))
-    if (user_roles[0].id) == str(everyone_id):
-      #print ("EVERYNE role found")
-      return 1
+    return True
 
-  return 1 #change to 0
+  return False
