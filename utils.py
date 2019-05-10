@@ -1,4 +1,5 @@
 import json
+import re
 import discord
 import auth_functions
 
@@ -8,6 +9,11 @@ def convert_json_str_to_dict(string_to_convert:str):
   obj = json.loads(string_to_convert)
   print(obj)
   return obj
+
+def filter_str_to_only_digits(original_str):
+  new_str = re.sub("\D", "", original_str)
+  return new_str
+
 
 # def convert_db_list_to_dict(list_to_convert:list):
 

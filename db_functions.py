@@ -11,28 +11,39 @@ af = auth_functions
 kf = kudos_functions
 
 def get_kudos_airtable():
-    kudos_table = af.get_airtable_table(os.getenv("AIRTABLE_KUDOS_TABLE_NAME"))
-    return kudos_table
+  kudos_table = af.get_airtable_table(os.getenv("AIRTABLE_KUDOS_TABLE_NAME"))
+  return kudos_table
 
 def get_user_stat_airtable():
   user_stat_table = af.get_airtable_table(os.getenv("AIRTABLE_USER_TABLE_NAME"))
   return user_stat_table
 
-def get_kudos_db_data(member_info):
+def set_kudos_db_data_by_field_name_for_member_id(member_id, column_name, value):
+  try:
+    kudos_table = get_kudos_airtable()
+    kudos_table.update_by_field('discord_user_id', member_id, {column_name : value})
+  except Exception as e:
+    print ("Error in set_kudos_db_data_by_field_name_for_member_id: " + e)
+
+
+def get_kudos_db_data(member_id):
   try:
 
-    print("Printing report for: " + member_info.name + "| ID: " + str(member_info.id))
+    print("Printing report for: " + str(member_id))
 
-    records = get_kudos_airtable().search('discord_user_id', member_info.id)
+    records = get_kudos_airtable().search('discord_user_id', member_id)
     print("Records: ")
     print(records)
 
     jsonStr = json.dumps(records)
 
-    json1_data = json.loads(jsonStr)[0]
-    datapoints = json1_data['fields']
-    print("Datapoints: ")
-    print (datapoints)
+    if (records):
+      json1_data = json.loads(jsonStr)[0]
+      datapoints = json1_data['fields']
+      print("Datapoints: ")
+      print (datapoints)
+    else:
+      raise ValueError('No records found for ' + member_id)
 
   except Exception as e:
       print ("Error in get_kudos_db_data: " + e)

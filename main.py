@@ -50,7 +50,7 @@ async def on_ready(pass_context=True):
   set_server_obj(bot.guilds[0])
   server = get_server_obj()
   #print(server.roles) #roles
-  print("Logged in as " + bot.user.name + " on " + server.name + ", id: " + str(server.id))
+  print("Logged in as " + bot.user.name + " on " + server.name + ", bot id: " + str(bot.user.id))
 
 @bot.event
 async def on_member_join(member):
@@ -123,9 +123,34 @@ async def kr(ctx): #tx.message.guild, ctx.message.channel, ctx.message.author
     #server = get_server_obj()
     await ctx.send(embed=embedInfo)
 
-# @bot.command() 
-# async def getemoji(emoji: discord.Emoji): 
-#   print(emoji.id)
+@bot.command()
+async def gj(ctx, *args): #tx.message.guild, ctx.message.channel, ctx.message.author
+    '''
+    Gift kudos by using gk @name ! Only works if you have available kudos to give.
+    '''
+    member_info = ctx.message.author
+    try:
+      if (args):
+        kudosee_id = utils.filter_str_to_only_digits(args[0])
+        try:
+          if len(args[1]) > 0:
+              num_of_kudos = int(args[1])
+        except:
+          num_of_kudos = 1
+
+        # if (num_of_kudos >= 2):
+        #   if (member_info.id != '151117856958971904'): #Hardcoded to ONLY Kate giving more than 1, BAD
+        #     print("CHECK ADMIN!>?") 
+        #     num_of_kudos = 1;
+        #   print(args)
+
+        num_of_kudos = 1 
+        # HARDCODED, NO ADMIN ALLOWED
+      kf.gift_kudos(member_info,kudosee_id, num_of_kudos) 
+    except Exception as e:
+      print("Error in gk: " + e)
+    #server = get_server_obj()
+    await ctx.send(args) #Will @ the person - '<@151117856958971904>'
 
 @bot.command()
 async def agree(ctx, *args): #tx.message.guild, ctx.message.channel, ctx.message.author
