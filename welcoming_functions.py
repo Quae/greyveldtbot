@@ -1,4 +1,7 @@
 import discord
+import roles_functions
+
+rf = roles_functions
 
 def get_rules_embed():
   embed = discord.Embed(title="Greyveldt Terms of Service", color=0xeee657)
@@ -15,21 +18,33 @@ def get_rules_embed():
 
 def tos_agreed_response():
   embed = discord.Embed(title="Welcome to Greyveldt~!", color=0xeee657)
-  embed.add_field(name="You are now '@Fresh Meat!'", value="You now have access to additional channels. If not, reach out to #ooc_help!")
+  embed.add_field(name="You are now '@Fresh Meat!", value="You now have access to additional channels. If not, reach out to #ooc_help!")
   return embed
 
-def brand_new_user(everyone_id, user_roles:list, debug):
-  print (user_roles)
-  print(len(user_roles))
-  
-  if (debug):
-    print ("Using fake roles!")
-  
-  if ((len(user_roles) == 1) and (str(user_roles[0].id)) == str(everyone_id)):
-    print("Only 1 role:")
-    print(str(user_roles[0].id))
-    print ("EVERYNE role found")
-    #print(str(everyone_id))
-    return True
+def tos_already_agreed_response():
+  embed = discord.Embed(title="Thanks!", color=0xeee657)
+  embed.add_field(name="We appreciate your re-affirmation!", value="Glory, glory, glory.")
+  return embed
 
+def brand_new_user(server:discord.Guild, user_id:int, debug):
+  if (debug == True):
+    print("Faking user roles for debug mode")
+    user_roles = [rf.get_specific_role_by_id(server, rf.everyone_id)]
+  else:
+    user_roles = rf.get_all_roles_of_user(server, user_id)
+
+  everyone_id = rf.everyone_id
+
+  if (len(user_roles) == 1):
+    if (debug == True):
+      print("Only 1 role:")
+      print(str(user_roles[0].id))
+      print(str(everyone_id))
+    if (user_roles[0].id) == int(everyone_id):
+      if (debug == True):
+        print ("EVERYNE role found")
+      return True
+
+  print ("Multiple roles found:")
+  print (user_roles)
   return False

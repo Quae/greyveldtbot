@@ -25,6 +25,14 @@ def set_kudos_db_data_by_field_name_for_member_id(member_id, column_name, value)
   except Exception as e:
     print ("Error in set_kudos_db_data_by_field_name_for_member_id: " + e)
 
+def get_kudos_db_data_by_field_name_for_member_id(member_id, column_name):
+  print("Col name in get_kudos_db_data_by_field_name_for_member_id: " + column_name)
+  try:
+    datapoints = get_kudos_db_data(member_id)
+    return datapoints[column_name]
+
+  except Exception as e:
+    print ("Error in get_kudos_db_data_by_field_name_for_member_id: " + e)
 
 def get_kudos_db_data(member_id):
   try:
@@ -32,8 +40,8 @@ def get_kudos_db_data(member_id):
     print("Printing report for: " + str(member_id))
 
     records = get_kudos_airtable().search('discord_user_id', member_id)
-    print("Records: ")
-    print(records)
+    # print("Records: ")
+    # print(records)
 
     jsonStr = json.dumps(records)
 

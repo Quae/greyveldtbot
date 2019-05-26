@@ -14,6 +14,29 @@ def filter_str_to_only_digits(original_str):
   new_str = re.sub("\D", "", original_str)
   return new_str
 
+#MEMBER is part of the server, will not work for DMs
+def get_member_by_id(server, kudosee_id):
+  kudosee_id = filter_str_to_only_digits(kudosee_id)
+  print("Kudosee ID:")
+  print(kudosee_id)
+  kudosee = server.get_member(int(kudosee_id))
+  print(kudosee)
+  return kudosee
+
+#USER is Discord-wide and works for DMs - WIP
+async def get_user_by_id(bot, kudosee_id):
+  kudosee_id = int(filter_str_to_only_digits(kudosee_id))
+  #kudosee_user_obj = discord.Client.get_user(int(kudosee_id))
+  #kudosee_user_obj = await discord.Client.get_user(discord.Client, int(kudosee_id))
+  try:
+    kudosee_user_obj = await bot.get_user(kudosee_id)
+    print("Kudosee OBJ:")
+    print(kudosee_user_obj)
+    return kudosee_user_obj
+  except Exception as e:
+      print ("Error in get_user_by_id: ")
+      print(e)
+
 
 # def convert_db_list_to_dict(list_to_convert:list):
 
