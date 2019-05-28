@@ -142,6 +142,22 @@ async def kr(ctx):  #tx.message.guild, ctx.message.channel, ctx.message.author
     #server = get_server_obj()
     await ctx.send(embed=embedInfo)
 
+@bot.command()
+async def daily(ctx):  #tx.message.guild, ctx.message.channel, ctx.message.author
+    '''
+    Claim your daily kudos reward!
+    '''
+    member_info = ctx.message.author
+    kudosSuccessAndEmbed = kf.claim_daily_kudos(member_info)
+
+    embedDailyNotice = kudosSuccessAndEmbed[1]
+
+    await ctx.send(embed=embedDailyNotice)
+
+    if (kudosSuccessAndEmbed[0] is True):
+        embedInfo = kf.kudos_report(member_info)
+        await ctx.send(embed=embedInfo)
+
 
 @bot.command()
 async def gj(

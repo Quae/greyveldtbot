@@ -2,6 +2,7 @@ import json
 import re
 import discord
 import auth_functions
+from datetime import datetime, timedelta
 
 af = auth_functions
 
@@ -36,6 +37,19 @@ async def get_user_by_id(bot, kudosee_id):
   except Exception as e:
       print ("Error in get_user_by_id: ")
       print(e)
+
+def convert_date_to_str_for_db(dateToBeConverted:datetime):
+  date = dateToBeConverted.isoformat("|","minutes")
+  print("Converted date:")
+  print(date)
+  return date
+
+def convert_str_date_to_date(stringToBeConverted):
+  
+  date = datetime.strptime(stringToBeConverted, '%Y-%m-%d|%H:%M')
+  print("Converted date:")
+  print(date)
+  return date
 
 
 # def convert_db_list_to_dict(list_to_convert:list):

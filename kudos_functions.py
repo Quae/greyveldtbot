@@ -6,6 +6,7 @@ import airtable
 import pprint
 import utils
 import json
+from datetime import datetime, timedelta
 
 af = auth_functions
 dbf = db_functions
@@ -31,7 +32,8 @@ def kudos_report(member_info):
     embed.add_field(name=":gift_heart: Giftable Kudos:", value=datapoints['giftable_kudos_available'])
     embed.add_field(name=":handshake: Unique Kudosees:", value=datapoints['unique_kudosees'])
   except Exception as e:
-      print ("Error in kudos_report: " + e)
+      print ("Error in kudos_report: ")
+      print (e)
 
   return embed
 
@@ -41,9 +43,18 @@ def get_kudos_datapoints(member_id:int):
   except Exception as e:
     print ("Error in get_kudos_datapoints: " + e)
 
+def daily_kudos_claimed(member_info):
+  embed = discord.Embed(title="Daily claimed!", color=0xeee657)
+  embed.add_field(name=" :money_with_wings: Spendable Kudos:", value="+2")
+  embed.add_field(name=":gift_heart: Giftable Kudos:", value="+2")
+  return embed
 
-def kudos_received_message(member_info, kudosee_id):
-  embed = discord.Embed(title=member_info.name + "You've been kudosed!" , color=0xeee657)
+def daily_kudos_cooldown(member_info):
+  embed = discord.Embed(title="You can only claim every 24 hours. Try again later." , color=0xeee657)
+  return embed
+
+def daily_kudos_failed(member_info):
+  embed = discord.Embed(title="Something went horribly wrong. Contact Quae." , color=0xeee657)
   return embed
 
 def kudos_sent_message(member_info, kudosee_id):
@@ -82,10 +93,50 @@ def set_kudos_column_of_member_by_id(member_id, column_name, num_of_kudos, incre
     current = dbf.get_kudos_db_data_by_field_name_for_member_id(member_id, column_name)
     print("Current total:")
     print(current)
+
+    if (current is None):
+      current = 0
+
     new_total = current + num_of_kudos
     print ("New total:")
     print (new_total)
-  dbf.set_kudos_db_data_by_field_name_for_member_id(member_id, column_name, new_total)
+  dbf.set_kudos_db_data_by_field_name_for_member_id(member_id, column_name, int(new_total))
+
+def claim_daily_kudos(member_info):
+  dailyAmount = 2
+  if (can_claim_daily_kudos(member_info) == True):
+    try:
+      set_kudos_column_of_member_by_id(member_info.id, "giftable_kudos_available", +dailyAmount, True)
+      set_kudos_column_of_member_by_id(member_info.id, "spendable_kudos", +dailyAmount, True)
+
+      currentDate = utils.convert_date_to_str_for_db(datetime.now())
+      dbf.set_kudos_db_data_by_field_name_for_member_id(member_info.id, "date_of_last_claim", currentDate)
+      return (True, daily_kudos_claimed(member_info))
+    except Exception as e:
+      print("Error in claim_daily_kudos: ")
+      print (e)
+      return (False, daily_kudos_failed(daily_kudos_failed))
+  else:
+    return (False, daily_kudos_cooldown(member_info))
+
+#Every 24 hours, a user can claim 5 spendable kudos
+def can_claim_daily_kudos(member_info):
+  dateOfLastClaim = dbf.get_kudos_db_data_by_field_name_for_member_id(member_info.id, "date_of_last_claim")
+
+  print("Date of Last Claim: ")
+  print(dateOfLastClaim)
+
+  if (dateOfLastClaim is None):
+    print("Date of last claim is empty.")
+    return True
+  else:
+    now = datetime.now()
+    dateOfLastClaim = utils.convert_str_date_to_date(dateOfLastClaim)
+
+    if now-timedelta(hours=24) >= dateOfLastClaim >= now:
+      return True
+
+  return False
 
 
 def gift_kudos(member_info, kudosee_id, num_of_kudos):
@@ -125,7 +176,7 @@ def build_blank_kudos_db_entry(member_info):
   datapoints['unique_kudosees'] = 0
   return datapoints
 
-def add_kudos(discord_user_id, amount_to_kudos):
+def add_player_given_kudos(discord_user_id, amount_to_kudos):
   entry = {}
   entry['discord_user_id'] = discord_user_id
   entry['lifetime_accrual'] = amount_to_kudos

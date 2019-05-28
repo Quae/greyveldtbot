@@ -18,12 +18,14 @@ def get_user_stat_airtable():
   user_stat_table = af.get_airtable_table(os.getenv("AIRTABLE_USER_TABLE_NAME"))
   return user_stat_table
 
+#VALUE must be untyped
 def set_kudos_db_data_by_field_name_for_member_id(member_id, column_name, value):
   try:
     kudos_table = get_kudos_airtable()
     kudos_table.update_by_field('discord_user_id', member_id, {column_name : value})
   except Exception as e:
-    print ("Error in set_kudos_db_data_by_field_name_for_member_id: " + e)
+    print ("Error in set_kudos_db_data_by_field_name_for_member_id: ")
+    print (e)
 
 def get_kudos_db_data_by_field_name_for_member_id(member_id, column_name):
   print("Col name in get_kudos_db_data_by_field_name_for_member_id: " + column_name)
@@ -32,7 +34,8 @@ def get_kudos_db_data_by_field_name_for_member_id(member_id, column_name):
     return datapoints[column_name]
 
   except Exception as e:
-    print ("Error in get_kudos_db_data_by_field_name_for_member_id: " + e)
+    print ("Error in get_kudos_db_data_by_field_name_for_member_id: ")
+    print(e)
 
 def get_kudos_db_data(member_id):
   try:
