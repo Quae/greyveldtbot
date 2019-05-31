@@ -14,6 +14,7 @@ import welcoming_functions
 import kudos_functions
 import db_functions
 import utils
+from datetime import datetime, timedelta
 #from discord import Embed, Emoji
 
 rf = roles_functions
@@ -59,9 +60,20 @@ async def on_ready(pass_context=True):
 
 @bot.event
 async def on_member_join(member):
-    await member.send(
-        "Welcome to Greyveldt! This is a literate heavy RP server. You will have limited channel access until you agree to abide by our TOS. Reply !TOS or !rules to read our terms of service."
-    )
+  embed = discord.Embed(title="Welcome to Greyveldt!", color=0xeee657)
+
+  embed.add_field(
+      name="A literate, heavy RP server with a focus on creative, cooperative story-telling...", value="...set in a janky steampunk/medieval cross genre on a planet unknown to Earth (and vice versa). Medium magic, high fun, no guns or lasers, but we've got ONE WHOLE TRAIN and printing presses!")
+
+  embed.add_field(
+      name="Investigate our GitHub hosted wiki...",
+      value=" Visit (https://github.com/Quae/greyveldt_lore/blob/master/README.md) for a guide to getting started in the lore world of Greyveldt.")
+
+  embed.add_field(
+      name="Read our No-Jerks-Allowed TOS...",
+      value="You will have limited channel access until you agree to abide by our TOS. Reply !rules to read our terms of service. You can ask for assistance in the #ooc-help channel if you have any questions, or if you need assistance.")
+
+  await member.send(embed=embed)
 
 
 # INTERNAL ONLY
@@ -91,7 +103,7 @@ async def info(
         embed.add_field(
             name="About Greyveldt:",
             value=
-            "This is an elite RP server for literate, experienced players or literate, intelligent folks who are willing to learn the rules of good co-operative improv. If you have questions, please post them in the #ooc-help channel."
+            "This is an elite RP server for literate, experienced players or literate, intelligent folks who are willing to learn the rules of good co-operative improvisational writing. If you have questions, please post them in the #ooc-help channel."
         )
     if embed != False:
         #print("Deleting old message:")
@@ -100,14 +112,6 @@ async def info(
         await asyncio.sleep(5)
         #print("Deleting bot's old message:")
         await message_alert_sent.delete()
-
-
-@bot.command()
-async def tos(ctx):  #tx.message.guild, ctx.message.channel, ctx.message.author
-    '''
-    Read our terms of service.
-    '''
-    await ctx.send(embed=wf.get_rules_embed())
 
 
 @bot.command()
@@ -246,41 +250,42 @@ async def agree(
             print("Debugging is ON!")
             debug = True
 
-    fresh_meat_role = rf.get_specific_role_by_id(server, rf.fresh_meat_id)
-    #everyone_id = rf.everyone_id
-
-    if (fresh_meat_role is None):
-        print("Fresh_meat not valid")
-        return 0
-
-    if (wf.brand_new_user(server, user_id, debug) is True):
-        try:
-            print("Waiting assign")
-            await rf.assign_role_to_user(server, user_id, fresh_meat_role)
-            #print(user_id)
-            print("Awaiting DB entry, member.id:")
-            print(member.id)
-            statResults = dbf.create_user_stat_entry(member)
-            if (debug):
-                print("Stats creation:")
-                print(statResults)
-
-            kudosResults = dbf.create_kudos_table_entry(member)
-            if (debug):
-                print("Kudos creation:")
-                print(kudosResults)
-
-            await ctx.send(embed=wf.tos_agreed_response())
-
-        except Exception as e:
-            print("Error in !agree:")
-            print(e)
-            return False
-
+    if (dbf.has_agreed_to_tos(user_id)):
+      return await ctx.send(embed=wf.tos_already_agreed_response())
     else:
-        print("Member already has other roles.")
-        await ctx.send(embed=wf.tos_already_agreed_response())
-        return
+      dbf.set_db_data_by_field_name_for_member_id(dbf.get_user_stat_airtable(), user_id, "tos_agreement_date", utils.convert_date_to_str_for_db(datetime.now()))
+
+      fresh_meat_role = rf.get_specific_role_by_id(server, rf.fresh_meat_id)
+
+      if (fresh_meat_role is None):
+          print("Fresh_meat not valid")
+          return 0
+
+      if (wf.brand_new_user(server, user_id, debug) is True):
+          try:
+              print("Waiting assign")
+              await rf.assign_role_to_user(server, user_id, fresh_meat_role)
+              #print(user_id)
+              print("Awaiting DB entry, member.id:")
+              print(member.id)
+              statResults = dbf.create_user_stat_entry(member)
+              if (debug):
+                  print("Stats creation:")
+                  print(statResults)
+
+              kudosResults = dbf.create_kudos_table_entry(member)
+              if (debug):
+                  print("Kudos creation:")
+                  print(kudosResults)
+
+
+
+          except Exception as e:
+              print("Error in !agree:")
+              print(e)
+              return False
+
+      await ctx.send(embed=wf.tos_agreed_response())
 
 
 # # I've moved the command out of on_message so it doesn't get cluttered

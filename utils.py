@@ -40,15 +40,14 @@ async def get_user_by_id(bot, kudosee_id):
 
 def convert_date_to_str_for_db(dateToBeConverted:datetime):
   date = dateToBeConverted.isoformat("|","minutes")
-  print("Converted date:")
-  print(date)
+  #print("Converted date:")
+  #print(date)
   return date
 
 def convert_str_date_to_date(stringToBeConverted):
-  
   date = datetime.strptime(stringToBeConverted, '%Y-%m-%d|%H:%M')
-  print("Converted date:")
-  print(date)
+  #print("Converted date:")
+  #print(date)
   return date
 
 
