@@ -87,11 +87,13 @@ def kudos_channel_announcement(member_info, kudosee_info):
 
 def get_giftable_kudos_of_member_by_id(member_id):
   try:
-    datapoints = dbf.get_kudos_db_data(member_id)
+    db_table = dbf.get_kudos_airtable()
+    datapoints = dbf.get_db_data_by_field_name_for_member_id(db_table, member_id, 'giftable_kudos_available')
+    print(datapoints)
   except Exception as e:
       print ("Error in get_giftable_kudos_of_member_by_id: " + e)
 
-  return int(datapoints['giftable_kudos_available'])
+  return datapoints
 
 
 def set_kudos_column_of_member_by_id(member_id, column_name, num_of_kudos, increment):
@@ -165,15 +167,19 @@ def can_claim_daily_kudos(member_info):
     else:
       return (False, daily_kudos_cooldown(member_info))
 
-def gift_kudos(member_info, kudosee_id, num_of_kudos):
-  
-  #Default users ONLY give 1 kudos, if we get a num above 1, it's because we passed an admin check earlier & we DON'T check/remove gift kudos from giver
+#Default users ONLY give 1 kudos, if we get a num above 1, it's because we passed an admin check earlier & we DON'T check/remove gift kudos from giver
+def gift_kudos(member_info:discord.member.Member, kudosee_id, num_of_kudos):
+  print("Num of kudos:")
+  print(num_of_kudos)
   if (num_of_kudos >= 2):
     print("ADMIN")
     #Straight DB dump
   else:
       #Check if any gift kudos to give, b/c normal user
+      print("Member Info.id:")
+      print(member_info.id)
       giftable_kudos_avail = get_giftable_kudos_of_member_by_id(member_info.id)
+      print(giftable_kudos_avail)
 
       if (giftable_kudos_avail >= 1):
         try:

@@ -180,22 +180,11 @@ async def gj(
             kudosee = utils.get_member_by_id(server, args[0]) #Works
             print("Kudosee type:")
             print(type(kudosee))
-            # kudoseeUser = discord.Client.get_user(bot, kudosee.id)
-            # print("Kudosee User Obj: ")
-            # print (kudoseeUser)
-            #await kudoseeUser.send("AAAAAAAAAAAAAAAAAAAAAAAAAA") #Nope for CLientUser
-            #await kudoseeUser.send_message("AAAAAAAAAAAAAAAAAAAAAAAAAA") #Nope for CLientUser
-            #await kudoseeUser.create_dm("AAAAAAAAAAAAAAAAAAAAAAAAAA") #Nope for CLientUser create_dm
-            #await kudosee.send("AAAAAAAAAAAAAAAAAAAAAAAAAA")
-
-           
-            # try:
-            #     if len(args[1]) > 0:
-            #         num_of_kudos = int(args[1])
-            # except:
-            #     num_of_kudos = 1
 
             num_of_kudos = 1
+
+            #print(kudosee.id)
+            #print(member_info.id)
 
             kf.gift_kudos(member_info, kudosee.id, num_of_kudos)
 
