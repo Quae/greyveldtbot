@@ -141,6 +141,7 @@ def can_claim_daily_kudos(member_info):
   member_id = str(member_info.id)
   kudos_info = get_kudos_datapoints(member_id)
   dateOfLastClaim = None
+  now = datetime.now()
 
   if (kudos_info is None):
     if (dbf.has_agreed_to_tos(member_id)):
@@ -150,11 +151,10 @@ def can_claim_daily_kudos(member_info):
       return (False, must_agree_to_tos_first(member_info))
   else:
     dateOfLastClaim = kudos_info['date_of_last_claim']
-
+    
   #Set dateOfLastClaim to NOW if we don't have one and it's an !agreed user
   if (dateOfLastClaim is None):
     print("Date of last claim is empty.")
-    now = datetime.now()
     dateOfLastClaim = now
     return (True, "YAY!")
   else:
