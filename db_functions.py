@@ -20,12 +20,21 @@ def get_user_stat_airtable():
   user_stat_table = af.get_airtable_table(os.getenv("AIRTABLE_USER_TABLE_NAME"))
   return user_stat_table
 
+def get_char_stat_airtable():
+  char_stat_table = af.get_airtable_table(os.getenv("AIRTABLE_CHAR_TABLE_NAME"))
+  return char_stat_table
+
 def has_agreed_to_tos(member_id):
   data = get_db_data_by_field_name_for_member_id(get_user_stat_airtable(), member_id, "tos_agreement_date")
   if (data is None):
     return False
   return True
 
+
+def get_db_error_in_embed_form():
+  embed = discord.Embed(title="AAAAAAAAAAAAAAAAAAAAAAAA!" , color=0xeee657)
+  embed.add_field(name=" :scream_cat: ERROR!", value="Alert Quae that something happened in the DB call!")
+  return embed
 
 ## SET DB DATA
 #VALUE must be untyped
@@ -40,7 +49,7 @@ def set_db_data_by_field_name_for_member_id(table_object, member_id, column_name
 def get_db_data_by_field_name_for_member_id(table_object, member_id, column_name):
   print("Col name in get_db_data_by_field_name_for_member_id: " + column_name)
   try:
-    datapoints = get_db_data_or_return_error(table_object, member_id) #Update to pull specific field
+    datapoints = get_db_data_or_return_error(table_object, 'discord_user_id', member_id) #Update to pull specific field
     #datapoints = table_object.search('discord_user_id', member_id, column_name, )
     return datapoints[column_name]
 
@@ -48,8 +57,8 @@ def get_db_data_by_field_name_for_member_id(table_object, member_id, column_name
     print ("Error in get_db_data_by_field_name_for_member_id: ")
     print(e)
 
-def get_db_data_or_return_error(table_object, member_id):
-  records = table_object.search('discord_user_id', member_id)
+def get_db_data_or_return_error(table_object, column_name, key):
+  records = table_object.search(column_name, key)
   jsonStr = json.dumps(records)
 
   if (records):
@@ -59,7 +68,7 @@ def get_db_data_or_return_error(table_object, member_id):
     print (datapoints)
     return datapoints
   else:
-    print('No records found for ' + member_id )
+    print('No records found for ' + key )
     return None
 
 def create_user_stat_entry(member_info):

@@ -41,7 +41,7 @@ def kudos_report(member_info):
 
 def get_kudos_datapoints(member_id:int):
   try:
-    data = dbf.get_db_data_or_return_error(dbf.get_kudos_airtable(), member_id)
+    data = dbf.get_db_data_or_return_error(dbf.get_kudos_airtable(), 'discord_user_id', member_id)
     return data
   except Exception as e:
     print ("Error in get_kudos_datapoints: " + e)

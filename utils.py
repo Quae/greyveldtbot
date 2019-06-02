@@ -50,6 +50,11 @@ def convert_str_date_to_date(stringToBeConverted):
   #print(date)
   return date
 
+def get_last_four_of_user_id(user_id):
+  user_id = str(user_id)
+  print(user_id)
+  lastFour = user_id[-4:]
+  return lastFour
 
 # def convert_db_list_to_dict(list_to_convert:list):
 

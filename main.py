@@ -11,6 +11,7 @@ from discord.ext import commands
 import auth_functions
 import roles_functions
 import welcoming_functions
+import charstat_functions
 import kudos_functions
 import db_functions
 import utils
@@ -21,6 +22,8 @@ rf = roles_functions
 af = auth_functions
 wf = welcoming_functions
 kf = kudos_functions
+csf = charstat_functions
+
 dbf = db_functions
 
 bot = commands.Bot(command_prefix="!")
@@ -161,6 +164,38 @@ async def daily(ctx):  #tx.message.guild, ctx.message.channel, ctx.message.autho
     if (kudosSuccessAndEmbed[0] is True):
         embedInfo = kf.kudos_report(member_info)
         await ctx.send(embed=embedInfo)
+
+
+@bot.command()
+async def charstats(ctx, *args):  #tx.message.guild, ctx.message.channel, ctx.message.author
+    '''
+    Print a report on your character's stats
+    '''
+    member_info = ctx.message.author
+
+    if (args): #return specific char
+      char_short_name = str(args[0])
+
+    try:
+      if (args[2]):
+        member_info = args[2]
+
+    except Exception:
+      pass
+
+      charStatsSuccessAndEmbed = csf.single_char_stat_report(member_info.id, char_short_name)
+      # print("charstats results: ")
+      # print(charStatsSuccessAndEmbed)
+    try:
+      if (charStatsSuccessAndEmbed[0] is True):
+          embedInfo = charStatsSuccessAndEmbed[1]
+          await ctx.send(embed=embedInfo)
+    except Exception:
+      return 
+
+    else: #return list of chars
+      return False
+
 
 
 @bot.command()
