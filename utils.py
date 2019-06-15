@@ -2,7 +2,7 @@ import json
 import re
 import discord
 import auth_functions
-from datetime import datetime, timedelta
+from datetime import *
 
 af = auth_functions
 

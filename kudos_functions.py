@@ -7,6 +7,7 @@ import pprint
 import utils
 import json
 from datetime import datetime, timedelta
+import dateutil
 
 af = auth_functions
 dbf = db_functions
@@ -162,7 +163,9 @@ def can_claim_daily_kudos(member_info):
   else:
     dateOfLastClaim = utils.convert_str_date_to_date(dateOfLastClaim)
 
-    if now-timedelta(hours=24) >= dateOfLastClaim >= now:
+    last24hours = now-timedelta(hours=24)
+    #print(last24hours)
+    if last24hours >= dateOfLastClaim <= now:
       return (True, "YAY!")
     else:
       return (False, daily_kudos_cooldown(member_info))
